@@ -1,0 +1,12 @@
+# Node artifact files
+node_modules/
+dist/
+
+# Misc
+config/
+
+# VSCode
+.vscode
+.history
+.cache
+*.code-workspace
