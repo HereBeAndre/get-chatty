@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const socketio = require("socket.io");
+const { geoLocationRequestBuilder } = require("./utils/functions");
 
 const port = process.env.PORT || 3000;
 
@@ -25,6 +26,10 @@ io.on("connection", (socket) => {
 
   socket.on("sendMessage", (message) => {
     io.emit("message", message);
+  });
+
+  socket.on("sendLocation", (coordinates) => {
+    io.emit("message", geoLocationRequestBuilder(coordinates));
   });
 
   socket.on("disconnect", () => {
