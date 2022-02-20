@@ -9,16 +9,23 @@ const sendLocationButtonElement = document.getElementById(
   "send-location-button"
 );
 const messagesElement = document.getElementById("messages");
-const messageTemplateElementHtml =
-  document.getElementById("message-template").innerHTML;
+const messageTemplate = document.getElementById("message-template").innerHTML;
+const locationTemplate = document.getElementById("location-template").innerHTML;
 // END ~ DOM elements
 
 socket.on("message", (message) => {
   console.log(message);
-  const html = Mustache.render(messageTemplateElementHtml, {
+  const htmlMessageElement = Mustache.render(messageTemplate, {
     msg: message,
   });
-  messagesElement.insertAdjacentHTML("beforeend", html);
+  messagesElement.insertAdjacentHTML("beforeend", htmlMessageElement);
+});
+
+socket.on("locationMessage", (locationUrl) => {
+  const htmlLocationElement = Mustache.render(locationTemplate, {
+    locationUrl,
+  });
+  messagesElement.insertAdjacentHTML("beforeend", htmlLocationElement);
 });
 
 // START ~ Event listeners
