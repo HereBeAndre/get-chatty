@@ -8,10 +8,17 @@ const messageButtonElement = messageFormElement.querySelector("button");
 const sendLocationButtonElement = document.getElementById(
   "send-location-button"
 );
+const messagesElement = document.getElementById("messages");
+const messageTemplateElementHtml =
+  document.getElementById("message-template").innerHTML;
 // END ~ DOM elements
 
 socket.on("message", (message) => {
   console.log(message);
+  const html = Mustache.render(messageTemplateElementHtml, {
+    msg: message,
+  });
+  messagesElement.insertAdjacentHTML("beforeend", html);
 });
 
 // START ~ Event listeners
