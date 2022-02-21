@@ -3,6 +3,8 @@
 > A real-time, multiroom chat app built with Express.js and Socket.IO.
 > It relies on the WebSocket protocol in order to let users join rooms where they can send messages and share their current geolocation.
 
+> <a href="https://get-chatty.herokuapp.com/" target="_blank">Try it here</a>
+
 ## Table of Contents
 
 - [Get Chatty](#get-chatty)
