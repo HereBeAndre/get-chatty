@@ -8,10 +8,19 @@ const messageButtonElement = messageFormElement.querySelector("button");
 const sendLocationButtonElement = document.getElementById(
   "send-location-button"
 );
+// END ~ DOM elements
+
+// START ~ Templates
 const messagesElement = document.getElementById("messages");
 const messageTemplate = document.getElementById("message-template").innerHTML;
 const locationTemplate = document.getElementById("location-template").innerHTML;
-// END ~ DOM elements
+// END ~ Templates
+
+// START ~ Options
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+});
+// END ~ Options
 
 // START ~ const and helpers
 const TIME_FORMAT = "h:mm a";
@@ -83,3 +92,5 @@ sendLocationButtonElement.addEventListener("click", (e) => {
   });
 });
 // END ~ Event listeners
+
+socket.emit("join", { username, room });
