@@ -12,12 +12,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bad-words": "^3.0.4",
-    "express": "^4.17.3",
-    "socket.io": "^4.4.1"
+    "bad-words": "3.0.4",
+    "express": "4.17.3",
+    "socket.io": "4.4.1"
   },
   "devDependencies": {
-    "env-cmd": "^10.1.0",
-    "nodemon": "^2.0.15"
+    "env-cmd": "10.1.0",
+    "nodemon": "2.0.15"
   }
 }
