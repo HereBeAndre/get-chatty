@@ -2,7 +2,10 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const socketio = require("socket.io");
-const { geoLocationRequestBuilder } = require("./utils/functions");
+const {
+  geoLocationRequestBuilder,
+  generateMessage,
+} = require("./utils/functions");
 const Filter = require("bad-words");
 
 const port = process.env.PORT || 3000;
@@ -22,8 +25,8 @@ app.use(express.static(publicDirectoryPath));
 
 // NOTE: socket is an object containing information about the connection
 io.on("connection", (socket) => {
-  socket.emit("message", "Welcome to the server!");
-  socket.broadcast.emit("message", "A new user has joined!");
+  socket.emit("message", generateMessage("Welcome!"));
+  socket.broadcast.emit("message", generateMessage("A new user has joined!"));
 
   socket.on("sendMessage", (message, callback) => {
     const filter = new Filter();
@@ -31,17 +34,20 @@ io.on("connection", (socket) => {
     if (filter.isProfane(message)) {
       return callback("Watch your mouth! Profanity is not welcome here.");
     }
-    io.emit("message", message);
+    io.emit("message", generateMessage(message));
     callback(); // Ackwoledgement
   });
 
   socket.on("sendLocation", (coordinates, callback) => {
-    io.emit("locationMessage", geoLocationRequestBuilder(coordinates));
+    io.emit(
+      "locationMessage",
+      generateMessage(geoLocationRequestBuilder(coordinates))
+    );
     callback();
   });
 
   socket.on("disconnect", () => {
-    io.emit("message", "A user has left");
+    io.emit("message", generateMessage("A user has left"));
   });
 });
 

@@ -6,4 +6,9 @@ const geoLocationRequestBuilder = (coordinates, baseUrl = MAPS_BASE_URL) => {
   return `${baseUrl}?${searchParams}`;
 };
 
-module.exports = { geoLocationRequestBuilder };
+const generateMessage = (text) => ({
+  text,
+  createdAt: new Date().getTime(),
+});
+
+module.exports = { geoLocationRequestBuilder, generateMessage };
