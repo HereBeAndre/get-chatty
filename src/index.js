@@ -96,15 +96,16 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     const user = removeUser(socketId);
-    if (user)
+    if (user) {
       io.to(user.room).emit(
         "message",
         generateMessage(CHAT_BOT, `${user.username} has left!`)
       );
-    io.to(user.room).emit("roomData", {
-      room: user.room,
-      users: getUsersInRoom(user.room),
-    });
+      io.to(user.room).emit("roomData", {
+        room: user.room,
+        users: getUsersInRoom(user.room),
+      });
+    }
   });
 });
 

@@ -27,6 +27,28 @@ const { username, room } = Qs.parse(location.search, {
 // START ~ const and helpers
 const TIME_FORMAT = "h:mm a";
 const formatDate = (date, format = TIME_FORMAT) => moment(date).format(format);
+
+const autoScroll = () => {
+  const newMessageElement = messagesElement.lastElementChild;
+
+  // Get height of new message
+  const newMessageStyles = getComputedStyle(newMessageElement);
+  const newMessageMargin = parseInt(newMessageStyles.marginBottom);
+  const newMessageHeight = newMessageElement.offsetHeight + newMessageMargin;
+
+  // Visible height
+  const visibleHeight = messagesElement.offsetHeight;
+
+  // Height of messages container
+  const containerHeight = messagesElement.scrollHeight;
+
+  // Get current scroll position
+  const scrollOffset = messagesElement.scrollTop + visibleHeight;
+
+  if (containerHeight - newMessageHeight <= scrollOffset) {
+    messagesElement.scrollTop = messagesElement.scrollHeight;
+  }
+};
 // END ~ const and helpers
 
 // START ~ socket listeners
@@ -38,6 +60,7 @@ socket.on("message", (message) => {
     createdAt: formatDate(createdAt),
   });
   messagesElement.insertAdjacentHTML("beforeend", htmlMessageElement);
+  autoScroll();
 });
 
 socket.on("locationMessage", (message) => {
@@ -48,6 +71,7 @@ socket.on("locationMessage", (message) => {
     username,
   });
   messagesElement.insertAdjacentHTML("beforeend", htmlLocationElement);
+  autoScroll();
 });
 
 socket.on("roomData", ({ room, users }) => {
