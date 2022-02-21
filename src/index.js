@@ -1,12 +1,20 @@
 const express = require("express");
 const http = require("http");
 const path = require("path");
+
 const socketio = require("socket.io");
+const Filter = require("bad-words");
+
 const {
   geoLocationRequestBuilder,
   generateMessage,
 } = require("./utils/functions");
-const Filter = require("bad-words");
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+} = require("./utils/users");
 
 const port = process.env.PORT || 3000;
 
@@ -25,13 +33,34 @@ app.use(express.static(publicDirectoryPath));
 
 // NOTE: socket is an object containing information about the connection
 io.on("connection", (socket) => {
-  socket.on("join", ({ username, room }) => {
+  socket.on("join", (userInfo, callback) => {
+    const {
+      error,
+      newUser: { username: sanitizedUserName, room: sanitizedRoomName },
+    } = addUser({ id: socket.id, ...userInfo });
+
+    if (error) {
+      return callback(error);
+    }
+
     // .join() can be used only server-side - it allows to access a specific chat room
-    socket.join(room);
-    socket.emit("message", generateMessage("Welcome!"));
+    socket.join(sanitizedRoomName);
+    socket.emit(
+      "message",
+      generateMessage(
+        `Hey ${sanitizedUserName}! Welcome to ${sanitizedRoomName}!`
+      )
+    );
     socket.broadcast
-      .to(room)
-      .emit("message", generateMessage(`${username} has just joined ${room}!`));
+      .to(sanitizedRoomName)
+      .emit(
+        "message",
+        generateMessage(
+          `${sanitizedUserName} has just joined ${sanitizedRoomName}!`
+        )
+      );
+
+    callback();
   });
 
   socket.on("sendMessage", (message, callback) => {
@@ -53,7 +82,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    io.emit("message", generateMessage("A user has left"));
+    const user = removeUser(socket.id);
+    if (user)
+      io.to(user.room).emit(
+        "message",
+        generateMessage(`${user.username} has left!`)
+      );
   });
 });
 
