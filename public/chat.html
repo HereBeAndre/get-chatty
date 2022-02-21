@@ -11,13 +11,18 @@
 
   <body>
     <div class="chat">
-      <div class="chat__sidebar"></div>
+      <div id="sidebar" class="chat__sidebar"></div>
       <div class="chat__main">
         <div id="messages" class="chat__messages"></div>
 
         <div class="compose">
           <form id="message-form">
-            <input name="message" placeholder="Say something :)" />
+            <input
+              name="message"
+              placeholder="Message"
+              required
+              autocomplete="off"
+            />
             <button type="submit">Send</button>
           </form>
           <button id="send-location-button">Send Location</button>
@@ -28,7 +33,7 @@
     <script id="message-template" type="text/html">
       <div class="message">
         <p>
-          <span class="message__name">John Doe</span>
+          <span class="message__name">{{username}}</span>
           <span class="message__meta">{{createdAt}}</span>
         </p>
         <p>{{msg}}</p>
@@ -37,7 +42,7 @@
     <script id="location-template" type="text/html">
       <div>
         <p>
-          <span class="message__name">John Doe</span>
+          <span class="message__name">{{username}}</span>
           <span class="message__meta">{{createdAt}}</span>
         </p>
         <p>
@@ -46,6 +51,15 @@
           >
         </p>
       </div>
+    </script>
+    <script id="sidebar-template" type="text/html">
+      <h2 class="room-title">{{room}}</h2>
+      <h3 class="list-title">Users</h3>
+      <ul class="users">
+        {{#users}}
+        <li>{{username}}</li>
+        {{/users}}
+      </ul>
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>

@@ -8,12 +8,14 @@ const messageButtonElement = messageFormElement.querySelector("button");
 const sendLocationButtonElement = document.getElementById(
   "send-location-button"
 );
+const sidebarElement = document.getElementById("sidebar");
 // END ~ DOM elements
 
 // START ~ Templates
 const messagesElement = document.getElementById("messages");
 const messageTemplate = document.getElementById("message-template").innerHTML;
 const locationTemplate = document.getElementById("location-template").innerHTML;
+const usersTemplate = document.getElementById("sidebar-template").innerHTML;
 // END ~ Templates
 
 // START ~ Options
@@ -27,9 +29,11 @@ const TIME_FORMAT = "h:mm a";
 const formatDate = (date, format = TIME_FORMAT) => moment(date).format(format);
 // END ~ const and helpers
 
+// START ~ socket listeners
 socket.on("message", (message) => {
-  const { text, createdAt } = message;
+  const { username, text, createdAt } = message;
   const htmlMessageElement = Mustache.render(messageTemplate, {
+    username,
     msg: text,
     createdAt: formatDate(createdAt),
   });
@@ -37,13 +41,23 @@ socket.on("message", (message) => {
 });
 
 socket.on("locationMessage", (message) => {
-  const { text: locationUrl, createdAt } = message;
+  const { text, createdAt, username } = message;
   const htmlLocationElement = Mustache.render(locationTemplate, {
-    locationUrl,
+    locationUrl: text,
     createdAt: formatDate(createdAt),
+    username,
   });
   messagesElement.insertAdjacentHTML("beforeend", htmlLocationElement);
 });
+
+socket.on("roomData", ({ room, users }) => {
+  const htmlUsersElement = Mustache.render(usersTemplate, {
+    room,
+    users,
+  });
+  sidebarElement.innerHTML = htmlUsersElement;
+});
+// END ~ socket listeners
 
 // START ~ Event listeners
 messageFormElement.addEventListener("submit", (e) => {
@@ -93,6 +107,7 @@ sendLocationButtonElement.addEventListener("click", (e) => {
 });
 // END ~ Event listeners
 
+// Error handling on Join page
 socket.emit("join", { username, room }, (error) => {
   if (error) {
     alert(error);
